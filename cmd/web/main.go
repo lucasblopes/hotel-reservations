@@ -26,6 +26,7 @@ func main() {
 
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
+	// Cokie persis even when the user closes the browser
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
