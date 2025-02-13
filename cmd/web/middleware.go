@@ -7,6 +7,7 @@ import (
 	"github.com/justinas/nosurf"
 )
 
+// WriteToConsole print a message in stdout every request
 func WriteToConsole(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Hit the page")
