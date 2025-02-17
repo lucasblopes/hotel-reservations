@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/lucasblopes/hotel-reservations/pkg/config"
-	"github.com/lucasblopes/hotel-reservations/pkg/handlers"
-	"github.com/lucasblopes/hotel-reservations/pkg/render"
+	"github.com/lucasblopes/hotel-reservations/internal/config"
+	"github.com/lucasblopes/hotel-reservations/internal/handlers"
+	"github.com/lucasblopes/hotel-reservations/internal/render"
 )
 
 const portNumber = ":8080"
@@ -23,7 +24,6 @@ var (
 func main() {
 	// change this to true when in production
 	app.InProduction = false
-
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	// Cokie persis even when the user closes the browser
@@ -46,7 +46,16 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
+	if app.InProduction {
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println("Error getting hostname:", err)
+			return
+		}
+		fmt.Printf("Starting application on: http://%s%s\n", hostname, portNumber)
+	} else {
+		fmt.Printf("Starting application on: http://localhost%s\n", portNumber)
+	}
 
 	srv := &http.Server{
 		Addr:    portNumber,
