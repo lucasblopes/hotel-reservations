@@ -24,6 +24,35 @@ var (
 
 // main is the main function
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if app.InProduction {
+		hostname, err := os.Hostname()
+		if err != nil {
+			fmt.Println("Error getting hostname:", err)
+			return
+		}
+		fmt.Printf("Starting application on: http://%s%s\n", hostname, portNumber)
+	} else {
+		fmt.Printf("Starting application on: http://localhost%s\n", portNumber)
+	}
+
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// run starts the application
+func run() error {
 	// what am i going to put in the session
 	gob.Register(models.Reservation{})
 	// change this to true when in production
@@ -40,6 +69,7 @@ func main() {
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(err, "cannot create template cache")
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -50,24 +80,5 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	if app.InProduction {
-		hostname, err := os.Hostname()
-		if err != nil {
-			fmt.Println("Error getting hostname:", err)
-			return
-		}
-		fmt.Printf("Starting application on: http://%s%s\n", hostname, portNumber)
-	} else {
-		fmt.Printf("Starting application on: http://localhost%s\n", portNumber)
-	}
-
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	return nil
 }

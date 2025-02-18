@@ -5,10 +5,11 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/lucasblopes/hotel-reservations/internal/config"
 	"github.com/lucasblopes/hotel-reservations/internal/handlers"
 )
 
-func routes() http.Handler {
+func routes(app *config.AppConfig) http.Handler {
 	mux := chi.NewRouter()
 
 	// Using the recoverer middleware
@@ -20,8 +21,8 @@ func routes() http.Handler {
 	mux.Get("/about", handlers.Repo.About)
 	mux.Get("/generals-quarters", handlers.Repo.Generals)
 	mux.Get("/majors-suite", handlers.Repo.Majors)
-	mux.Get("/search-availability", handlers.Repo.Avaliability)
-	mux.Post("/search-availability", handlers.Repo.PostAvaliability)
+	mux.Get("/search-availability", handlers.Repo.Availability)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
 	// mux.Post("/search-availability-json", handlers.Repo.PostAvaliabilityJson)
 	mux.Get("/contact", handlers.Repo.Contact)
 

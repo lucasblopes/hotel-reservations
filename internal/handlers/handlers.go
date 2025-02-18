@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -68,7 +70,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("first_name", "last_name", "email")
-	form.MinLength("first_name", 3, r)
+	form.MinLength("first_name", 3)
 	form.IsEmail("email")
 
 	if !form.Valid() {
@@ -96,16 +98,38 @@ func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "majors.page.tmpl", &models.TemplateData{})
 }
 
-// Avaliability is the handler for the search avaliability page
-func (m *Repository) Avaliability(w http.ResponseWriter, r *http.Request) {
+// Availability renders the search availability page
+func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "search-availability.page.tmpl", &models.TemplateData{})
 }
 
-// PostAvaliability is the handler for the search avaliability page
-func (m *Repository) PostAvaliability(w http.ResponseWriter, r *http.Request) {
-	// start := r.Form.Get("start")
-	// end := r.Form.Get("end")
-	w.Write([]byte("Posted to search avaliability"))
+// PostAvailability handles post
+func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	start := r.Form.Get("start")
+	end := r.Form.Get("end")
+
+	w.Write([]byte(fmt.Sprintf("start date is %s and end is %s", start, end)))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON handles request for availability and sends JSON response
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	resp := jsonResponse{
+		OK:      true,
+		Message: "Available!",
+	}
+
+	out, err := json.MarshalIndent(resp, "", "     ")
+	if err != nil {
+		log.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
 
 // Contact is the handler for the contact page
