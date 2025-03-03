@@ -8,7 +8,7 @@ DEFAULT_BACKUP_FILE="postgres_backup_$(date +%Y%m%d_%H%M%S).sql"
 BACKUP_FILE=${1:-$DEFAULT_BACKUP_FILE}
 
 # PostgreSQL connection parameters from Docker
-DB_NAME="postgres" # Correct spelling - not "posgres"
+DB_NAME="bookings" # Correct spelling - not "posgres"
 DB_USER="lucas"
 DB_PASS="admin"
 DB_HOST="localhost"
