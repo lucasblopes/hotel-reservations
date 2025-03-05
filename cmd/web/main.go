@@ -36,6 +36,10 @@ func main() {
 	// Close the DB connection when the program finishes
 	defer db.SQL.Close()
 
+	defer close(app.MailChan)
+	listenForMail()
+	fmt.Println("Starting mail listener...")
+
 	if app.InProduction {
 		hostname, err := os.Hostname()
 		if err != nil {
@@ -65,6 +69,9 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
+
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	// change this to true when in production
 	app.InProduction = false
