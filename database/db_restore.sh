@@ -40,7 +40,7 @@ if ! grep -q "PostgreSQL database dump" "$BACKUP_FILE" && ! grep -q "SET stateme
 fi
 
 # PostgreSQL connection parameters from Docker
-DB_NAME="postgres"
+DB_NAME="bookings"
 DB_USER="lucas"
 DB_PASS="admin"
 DB_HOST="localhost"

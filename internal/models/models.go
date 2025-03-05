@@ -7,7 +7,7 @@ import (
 // User is the user model
 type User struct {
 	ID          int
-	FirsName    string
+	FirstName   string
 	LastName    string
 	Email       string
 	Password    string
