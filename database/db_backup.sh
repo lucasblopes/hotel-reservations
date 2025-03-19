@@ -8,7 +8,7 @@ DEFAULT_BACKUP_FILE="postgres_backup_$(date +%Y%m%d_%H%M%S).sql"
 BACKUP_FILE=${1:-$DEFAULT_BACKUP_FILE}
 
 # PostgreSQL connection parameters from Docker
-DB_NAME="bookings" # Correct spelling - not "posgres"
+DB_NAME="bookings"
 DB_USER="lucas"
 DB_PASS="admin"
 DB_HOST="localhost"
@@ -30,7 +30,8 @@ if [ -n "$CONTAINER_NAME" ] && docker ps -q -f name=$CONTAINER_NAME | grep -q .;
     echo "Using Docker container: $CONTAINER_NAME"
 
     # Verify database exists before attempting backup
-    DB_EXISTS=$(docker exec $CONTAINER_NAME psql -U $DB_USER -lqt | grep -c "\b$DB_NAME\b")
+    DB_EXISTS=$(docker exec $CONTAINER_NAME psql -U $DB_USER -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME';")
+    # DB_EXISTS=$(docker exec $CONTAINER_NAME psql -U $DB_USER -lqt | grep -c "\b$DB_NAME\b")
 
     if [ "$DB_EXISTS" -eq "0" ]; then
         echo "Error: Database '$DB_NAME' does not exist in container!"

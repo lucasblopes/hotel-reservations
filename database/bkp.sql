@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 17.3
--- Dumped by pg_dump version 17.2
+-- Dumped by pg_dump version 17.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,6 +16,22 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: lucas
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO lucas;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: lucas
+--
+
+COMMENT ON SCHEMA public IS '';
+
 
 SET default_tablespace = '';
 
@@ -35,7 +51,8 @@ CREATE TABLE public.reservations (
     end_date date NOT NULL,
     room_id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    processed integer DEFAULT 0 NOT NULL
 );
 
 
@@ -195,7 +212,7 @@ CREATE TABLE public.users (
     first_name character varying(255) DEFAULT ''::character varying NOT NULL,
     last_name character varying(255) DEFAULT ''::character varying NOT NULL,
     email character varying(255) NOT NULL,
-    password character varying(60) NOT NULL,
+    password character varying(255) NOT NULL,
     access_level integer DEFAULT 1 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -259,6 +276,115 @@ ALTER TABLE ONLY public.rooms ALTER COLUMN id SET DEFAULT nextval('public.rooms_
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: reservations; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.reservations (id, first_name, last_name, email, phone, start_date, end_date, room_id, created_at, updated_at, processed) FROM stdin;
+2	Jame	Bond	james@bond.com	007-007-0007	2025-05-14	2025-05-23	1	2025-03-05 13:49:53.326732	2025-03-07 17:25:18.02864	1
+3	Lucas	Lopes	ll@gmail.com	12345678	2025-03-25	2025-03-31	2	2025-03-15 12:55:56.05425	2025-03-15 12:55:56.05425	1
+\.
+
+
+--
+-- Data for Name: restrictions; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.restrictions (id, restriction_name, created_at, updated_at) FROM stdin;
+1	Reservation	2025-02-03 00:00:00	2025-02-03 00:00:00
+2	Owner Block	2025-03-03 00:00:00	2025-03-03 00:00:00
+\.
+
+
+--
+-- Data for Name: room_restrictions; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.room_restrictions (id, start_date, end_date, room_id, reservation_id, restriction_id, created_at, updated_at) FROM stdin;
+2	2025-05-14	2025-05-23	1	2	1	2025-03-05 13:49:53.336527	2025-03-05 13:49:53.336527
+3	2025-03-25	2025-03-31	2	3	1	2025-03-15 12:55:56.065201	2025-03-15 12:55:56.065201
+\.
+
+
+--
+-- Data for Name: rooms; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.rooms (id, room_name, created_at, updated_at) FROM stdin;
+1	General's Quarters	2025-02-03 00:00:00	2025-02-03 00:00:00
+2	Major's Suite	2025-03-03 00:00:00	2025-03-03 00:00:00
+\.
+
+
+--
+-- Data for Name: schema_migration; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.schema_migration (version) FROM stdin;
+20250226181857
+20250226182338
+20250226182432
+20250226182528
+20250226182612
+20250226194424
+20250226194721
+20250226213417
+20250226214134
+20250226214410
+20250303172711
+20250303193821
+20250303194127
+20250306191721
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: lucas
+--
+
+COPY public.users (id, first_name, last_name, email, password, access_level, created_at, updated_at) FROM stdin;
+1	Lucas	Lopes	admin@admin.com	$2a$12$D7vVKPwYFwlJTINsCxyetCefuQIN2bAEnkzZJJMd3QKTD.QLwM2\n2n	3	2025-03-05 00:00:00	2025-03-05 00:00:00
+2	James	Bond	james@bond.com	$2a$12$p6CpCVQlR8eFPEOnaj1TN.lPsGRBduQirHQUfaTQAyA8LzjcYxzS2	1	2025-03-05 00:00:00	2025-03-05 00:00:00
+3	Test	Test	me@here.ca	$2a$12$qKRhp1iYpEXl0iIm3SSvmuuWm66XgQWp8bcV5WbP13a5RE0KrGyeq\n	1	2025-03-19 00:00:00	2025-03-19 00:00:00
+4	Michael	Scott	michael@scott.com	$2a$12$qKRhp1iYpEXl0iIm3SSvmuuWm66XgQWp8bcV5WbP13a5RE0KrGyeq\n	1	2025-03-19 00:00:00	2025-03-19 00:00:00
+\.
+
+
+--
+-- Name: reservations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lucas
+--
+
+SELECT pg_catalog.setval('public.reservations_id_seq', 13, true);
+
+
+--
+-- Name: restrictions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lucas
+--
+
+SELECT pg_catalog.setval('public.restrictions_id_seq', 2, true);
+
+
+--
+-- Name: room_restrictions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lucas
+--
+
+SELECT pg_catalog.setval('public.room_restrictions_id_seq', 29, true);
+
+
+--
+-- Name: rooms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lucas
+--
+
+SELECT pg_catalog.setval('public.rooms_id_seq', 2, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: lucas
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 
 
 --
@@ -388,6 +514,13 @@ ALTER TABLE ONLY public.room_restrictions
 
 ALTER TABLE ONLY public.room_restrictions
     ADD CONSTRAINT room_restrictions_rooms_id_fk FOREIGN KEY (room_id) REFERENCES public.rooms(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: lucas
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 
 
 --

@@ -7,13 +7,20 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/justinas/nosurf"
 	"github.com/lucasblopes/hotel-reservations/internal/config"
 	"github.com/lucasblopes/hotel-reservations/internal/models"
 )
 
-var functions = template.FuncMap{}
+// functions is a map of functions for templates to access
+var functions = template.FuncMap{
+	"humanDate":  HumanDate,
+	"formatDate": FormatDate,
+	"iterate":    Iterate,
+	"add":        Add,
+}
 
 var (
 	app             *config.AppConfig
@@ -23,6 +30,30 @@ var (
 // NewRenderer sets the config for the template package
 func NewRenderer(a *config.AppConfig) {
 	app = a
+}
+
+// Iterate returns a slice of ints, startint at 1, going to count
+func Iterate(count int) []int {
+	var i int
+	var items []int
+	for i = 0; i < count; i++ {
+		items = append(items, i)
+	}
+	return items
+}
+
+func Add(a, b int) int {
+	return a + b
+}
+
+// HumanDate returns time in YYYY-MM-DD format
+func HumanDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+// FormatDate returns time in YYYY-MM-DD format
+func FormatDate(t time.Time, f string) string {
+	return t.Format(f)
 }
 
 // AddDefaultData adds data for all templates
