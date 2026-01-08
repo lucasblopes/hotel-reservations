@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,8 +25,22 @@ func listenForMail() {
 
 func sendMsg(m models.MailData) {
 	server := mail.NewSMTPClient()
-	server.Host = "localhost"
-	server.Port = 1025
+	mailHost := os.Getenv("MAIL_HOST")
+	if mailHost == "" {
+		mailHost = "localhost"
+	}
+	server.Host = mailHost
+
+	mailPortStr := os.Getenv("MAIL_PORT")
+	if mailPortStr == "" {
+		mailPortStr = "1025"
+	}
+
+	port, err := strconv.Atoi(mailPortStr)
+	if err != nil {
+		port = 1025
+	}
+	server.Port = port
 	server.KeepAlive = false
 	server.ConnectTimeout = 10 * time.Second
 	server.SendTimeout = 10 * time.Second

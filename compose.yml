@@ -1,4 +1,22 @@
 services:
+  app:
+    build: .
+    container_name: hotel-reservations-app
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=bookings
+      - DB_USER=lucas
+      - DB_PASSWORD=admin
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+    depends_on:
+      - db
+      - mailhog
+
   db:
     image: postgres:alpine
     container_name: hotel-reservations-db
@@ -6,7 +24,7 @@ services:
     environment:
       POSTGRES_USER: lucas
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: postgres
+      POSTGRES_DB: bookings
     ports:
       - "5432:5432"
     volumes:
@@ -19,8 +37,8 @@ services:
     container_name: mailhog
     restart: always
     ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI port
 
 volumes:
   postgres_data:
