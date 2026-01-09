@@ -2,15 +2,15 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "main" ] # when code is merged
+    branches: ["main"] # when code is merged
   pull_request:
-    branches: [ "main" ] # when pr is open
+    branches: ["main"] # when pr is open
 
 jobs:
   test:
     name: Test Application
     runs-on: ubuntu-latest
-    
+
     # Create temporary db for testing
     services:
       postgres:
@@ -35,7 +35,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.15'
+          go-version: "1.25"
 
       - name: Run Tests
         env:
