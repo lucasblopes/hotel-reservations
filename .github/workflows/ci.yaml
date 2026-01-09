@@ -1,8 +1,10 @@
 name: Run Tests
 
 on:
+  push:
+    branches: [ "main" ] # when code is merged
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ] # when pr is open
 
 jobs:
   test:
