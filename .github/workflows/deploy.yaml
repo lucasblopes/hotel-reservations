@@ -2,7 +2,7 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -19,12 +19,12 @@ jobs:
           port: 22
           # 1. Variable list that is being sent to EC2
           envs: DB_HOST,DB_PORT,DB_NAME,DB_USER,DB_PASSWORD,MAIL_HOST,MAIL_PORT
-          
+
           script: |
             # The repo must exist on EC2 already
             cd ~/hotel-reservations
             git pull origin main
-            
+
             # Create .env file
             echo "DB_HOST=$DB_HOST" > .env
             echo "DB_PORT=$DB_PORT" >> .env
@@ -33,9 +33,9 @@ jobs:
             echo "DB_PASSWORD=$DB_PASSWORD" >> .env
             echo "MAIL_HOST=$MAIL_HOST" >> .env
             echo "MAIL_PORT=$MAIL_PORT" >> .env
-            
-            docker-compose down
-            docker-compose up -d --build
+
+            docker compose down
+            docker compose up -d --build
 
         # Map the GitHub Secrets to the variables listed in 'envs' above.
         env:
